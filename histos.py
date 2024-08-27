@@ -8,21 +8,23 @@ from scipy.interpolate import interp1d
 # ARGS
 ####################################################################
 
-parser = argparse.ArgumentParser(description='--')
-parser.add_argument('-I','--input_path', type=str, help='Caminho do arquivo .csv input') 
+parser = argparse.ArgumentParser(description='Gera histogramas interativos do tipo: barras, acumulado e proability plot')
+parser.add_argument('-I','--input', type=str, help='Caminho do arquivo .csv input') 
 parser.add_argument('-V','--var', type=str, help='Nome da coluna/variável de interesse')
-parser.add_argument('-P','--output_prefix', type=str, help='Prefixo para o nome das imagens output')
+parser.add_argument('-P','--prefix', type=str, help='Prefixo para o nome das imagens output')
+parser.add_argument('-D','--delimiter', type=str, default=",", help="Opcional - Caracter delimitador do arquivo .csv (padrão=',')")
+parser.add_argument('-N','--na_code', type=float, default=-99.00, help="Opcional - Código de valor não atribuído (padrão=-99.00)")
 args = parser.parse_args()
 
 # INPUTS
 ####################################################################
 
 #Geral
-
-file_path = args.input_path  # Certifique-se de que o caminho do arquivo esteja correto
+file_path = args.input  # Certifique-se de que o caminho do arquivo esteja correto
 coluna = args.var
-outputNamePrefix = args.output_prefix + "_" # Nome das figuras de output = outputPrefix + tipoGrafico
+outputNamePrefix = args.prefix + "-" # Nome das figuras de output = outputPrefix + tipoGrafico
 xTituloEixo = coluna
+csvDelimiter = args.delimiter
 
 # Histograma
 yTituloEixoHist= "Frequência Acumulada (%)"
@@ -41,7 +43,7 @@ tituloGraficoHistPlt = 'Probability Plot'
 #################################################################
 
 # Ler o arquivo CSV
-df = pd.read_csv(file_path)
+df = pd.read_csv(file_path, delimiter=csvDelimiter, na_values=-99.00)
 dados = df[coluna].dropna()
 
 
@@ -128,16 +130,10 @@ plt.savefig(outputNamePrefix + tipoGraficoHistAcum)  # Salva como PNG
 tipoGraficoProbPlt = "ProbPlt"
 dados_ordenados = np.sort(dados)
 probabilidades = (np.arange(len(dados_ordenados)) + 0.5) / len(dados_ordenados)
-quantiles_teoricos_lognormal = stats.lognorm.ppf(probabilidades, s=np.std(np.log(dados_ordenados)), scale=np.exp(np.mean(np.log(dados_ordenados))))
 
 # Plotar o gráfico de probabilidade
 plt.figure(figsize=(10, 6))
 plt.plot(dados_ordenados, probabilidades * 100, marker='o', linestyle='none', color='blue')  # Multiplica por 100 para ter a escala em %
-
-# Adicionar uma linha de ajuste (opcional)
-z = np.polyfit(dados_ordenados, probabilidades, 1)
-p = np.poly1d(z)
-plt.plot(dados_ordenados, p(dados_ordenados) * 100, linestyle='--', color='red')  # Multiplica por 100 para ter a escala em %
 
 # Adicionando labels e título
 plt.xlabel(xTituloEixo)
