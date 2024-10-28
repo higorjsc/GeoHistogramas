@@ -29,8 +29,8 @@ Este script Python gera histogramas interativos a partir de dados em uma coluna 
     python nome_do_script.py -I caminho/para/seu/arquivo.csv -V nome_da_coluna -D delimitador_do_csv -N codigo_na_value -P prefixo_desejado
 * `-I` ou `--input`: Caminho para o arquivo CSV contendo os dados.
 * `-V` ou `--var`: Nome da coluna que você deseja analisar.
-* `-D` ou `--delimiter`: Caractere delimitador usado no seu arquivo CSV (padrão='-99.00').
-* `-N` ou `--na_code`: Opcional - Código de valor não atribuído (padrão=',').
+* `-D` ou `--delimiter`: Caractere delimitador usado no seu arquivo CSV (padrão=',').
+* `-N` ou `--na_code`: Opcional - Código de valor não atribuído (padrão='-99.00').
 * `-P` ou `--prefix`: Opcional - Prefixo para os nomes dos arquivos de imagem gerados.
 
 3. **Visualize os gráficos: Os gráficos serão salvos como arquivos PNG com os nomes:**
